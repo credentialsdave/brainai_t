@@ -1,0 +1,1 @@
+-e ".env\n__pycache__/\nvenv/\nnode_modules/\n*.db" 

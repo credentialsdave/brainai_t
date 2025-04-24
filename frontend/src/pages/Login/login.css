@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500&display=swap');
+
+/* Custom class definitions */
+.w-111px { width: 111px; }
+.h-95px { height: 95px; }
+.w-174px { width: 174px; }
+.w-150px { width: 150px; } /* New smaller width for buttons */
+.h-64px { height: 64px; }
+.max-w-500px { max-width: 500px; }
+.mt-40 { margin-top: 40px; } /* Added for mobile spacing */
+
+/* Hover effects */
+.hover-bg-gray-800 { background-color: transparent; }
+.hover-bg-gray-800:hover { background-color: #333; }
+.hover-text-white { color: #AFAFAF; }
+.hover-text-white:hover { color: #fff; }
+.transition-color { transition: color 0.3s ease; }
+.transition-all { transition: all 0.3s ease; }
+
+/* Fonts */
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 576px) { /* xs */
+  .w-174px, .w-150px {
+    width: 100%;
+  }
+  
+  .mobile-content-shift {
+    margin-top: 60px; /* Shift content down for mobile view */
+  }
+  
+  .mobile-buttons-container {
+    width: 85%; /* Make buttons container slightly smaller on mobile */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) { /* sm */
+  .w-sm-174px {
+    width: 174px;
+  }
+  
+  .w-sm-150px {
+    width: 150px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) { /* md */
+  .max-w-500px {
+    max-width: 450px;
+  }
+  
+  .content-shift {
+    margin-top: 30px; /* Shift content down slightly */
+  }
+}
+
+@media (min-width: 993px) and (max-width: 1200px) { /* lg */
+  .max-w-500px {
+    max-width: 480px;
+  }
+  
+  .content-shift {
+    margin-top: 40px; /* Shift content down slightly */
+  }
+}
+
+@media (min-width: 1201px) { /* xl */
+  .max-w-500px {
+    max-width: 500px;
+  }
+  
+  .content-shift {
+    margin-top: 50px; /* Shift content down slightly */
+  }
+}
