@@ -89,12 +89,12 @@ const Login = () => {
                 disabled={loading}
               >
                 <img src={googleIcon} alt="Google Icon" className="w-6 h-6 mr-3" />
-                <span className="text-white">{loading ? 'Signing in...' : 'Google'}</span>
+                {/* <span className="text-white">{loading ? 'Signing in...' :''}</span> */}
               </button>
               
               <button className="flex items-center justify-center bg-transparent border border-gray-600 rounded-full py-3 px-6 text-white hover-bg-gray-800 transition-all w-full sm:w-150px h-64px">
                 <img src={appleIcon} alt="Apple Icon" className="w-6 h-6 mr-3" />
-                <span className="text-white">Apple</span>
+                {/* <span className="text-white"></span> */}
               </button>
             </div>
           </div>

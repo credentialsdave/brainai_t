@@ -1,4 +1,3 @@
-// src/pages/ChatBot/ChatBotUI.js
 import axios from 'axios';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { motion } from 'framer-motion';
@@ -67,7 +66,9 @@ const ChatBotUI = () => {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { text: input, sender: 'user' };
+    const currentInput = input;
+    const userMessage = { text: currentInput, sender: 'user' };
+    
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
@@ -75,11 +76,11 @@ const ChatBotUI = () => {
 
     try {
       // const response = await axios.post('http://localhost:5000/chat', { 
-      //   text: input,
+      //   text: currentInput,
       //   voice_output: voiceOutput
       // });
       const response = await axios.post(`${config.API_URL}/chat`, { 
-        text: input,
+        text: currentInput,
         voice_output: voiceOutput
       });
       
@@ -162,7 +163,13 @@ const ChatBotUI = () => {
   // Handle keyboard shortcuts
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      sendMessage();
+      if (!isChatActive) {
+        // If not in chat mode, start a general chat
+        handleCategorySelect('General');
+        setTimeout(() => sendMessage(), 100);
+      } else {
+        sendMessage();
+      }
     }
   };
 
@@ -174,16 +181,16 @@ const ChatBotUI = () => {
         <div className="sidebar-top p-4">
           <ul className="space-y-4">
             <li className="flex items-center space-x-3 hover-bg-dark p-2 rounded-md cursor-pointer">
-              <img src={chatIcon} alt="Chat Icon" className="w-6 h-6" />
-              <span className="text-white font-inter text-[14px]">AI Chat Tool Ethics</span>
+              <img src={chatIcon} alt="Chat Icon" className="w-5 h-5" />
+              <span className="text-white font-inter text-[13px]">AI Chat Tool Ethics</span>
             </li>
             <li className="flex items-center space-x-3 hover-bg-dark p-2 rounded-md cursor-pointer">
-              <img src={chatIcon} alt="Chat Icon" className="w-6 h-6" />
-              <span className="text-white font-inter text-[14px]">AI Chat Tool Impact Writing</span>
+              <img src={chatIcon} alt="Chat Icon" className="w-5 h-5" />
+              <span className="text-white font-inter text-[13px]">AI Chat Tool Impact Writing</span>
             </li>
             <li className="flex items-center space-x-3 hover-bg-dark p-2 rounded-md cursor-pointer" onClick={() => clearConversations()}>
-              <img src={chatIcon} alt="Chat Icon" className="w-6 h-6" />
-              <span className="text-white font-inter text-[14px]">New chat</span>
+              <img src={chatIcon} alt="Chat Icon" className="w-5 h-5" />
+              <span className="text-white font-inter text-[13px]">New chat</span>
             </li>
           </ul>
         </div>
@@ -192,20 +199,20 @@ const ChatBotUI = () => {
         <div className="sidebar-bottom p-4 border-t border-[#2A2A2A]">
           <ul className="space-y-4">
             <li className="flex items-center space-x-3 hover-bg-dark p-2 rounded-md cursor-pointer" onClick={() => clearConversations()}>
-              <img src={deleteIcon} alt="Delete Icon" className="w-6 h-6" />
-              <span className="text-white font-inter text-[14px]">Clear conversations</span>
+              <img src={deleteIcon} alt="Delete Icon" className="w-5 h-5" />
+              <span className="text-white font-inter text-[13px]">Clear conversations</span>
             </li>
             <li className="flex items-center space-x-3 hover-bg-dark p-2 rounded-md cursor-pointer">
-              <img src={accountIcon} alt="Account Icon" className="w-6 h-6" />
-              <span className="text-white font-inter text-[14px]">My account</span>
+              <img src={accountIcon} alt="Account Icon" className="w-5 h-5" />
+              <span className="text-white font-inter text-[13px]">My account</span>
             </li>
             <li className="flex items-center space-x-3 hover-bg-dark p-2 rounded-md cursor-pointer">
-              <img src={faqIcon} alt="FAQ Icon" className="w-6 h-6" />
-              <span className="text-white font-inter text-[14px]">Updates & FAQ</span>
+              <img src={faqIcon} alt="FAQ Icon" className="w-5 h-5" />
+              <span className="text-white font-inter text-[13px]">Updates & FAQ</span>
             </li>
             <li className="flex items-center space-x-3 hover-bg-dark p-2 rounded-md cursor-pointer" onClick={handleLogout}>
-              <img src={logoutIcon} alt="Logout Icon" className="w-6 h-6" />
-              <span className="text-white font-inter text-[14px]">Log out</span>
+              <img src={logoutIcon} alt="Logout Icon" className="w-5 h-5" />
+              <span className="text-white font-inter text-[13px]">Log out</span>
             </li>
           </ul>
         </div>
@@ -215,42 +222,23 @@ const ChatBotUI = () => {
       <div className="flex-1 flex flex-col h-full">
         {!isChatActive ? (
           // Home screen with categories
-          <div className="flex-1 flex flex-col items-center justify-center p-6">
-            <div className="flex flex-col items-center space-y-8 w-full max-w-2xl">
+          <div className="flex-1 flex flex-col items-center justify-between h-full">
+            <div className="flex flex-col items-center pt-24 w-full max-w-2xl">
               {/* Brain Logo and Title */}
-              <div className="flex items-center space-x-4 mb-8">
+              <div className="flex items-center space-x-4 mb-12"> 
                 <img src={brainLogo} alt="Brain Logo" className="w-[63px] h-[54px]" />
                 <h1 className="text-white text-[35px] font-medium tracking-[-2px] font-poppins">BrainAI</h1>
               </div>
 
               {/* User display */}
               {user && (
-                <div className="bg-[#1A1A1A] p-3 rounded-lg text-white mb-2">
+                <div className="bg-[#1A1A1A] p-3 rounded-lg text-white mb-12">
                   <p className="text-center">Welcome, {user.displayName || user.email}</p>
                 </div>
               )}
 
-              {/* Voice Toggle Section */}
-              <div className="flex space-x-6 mb-8">
-                <div 
-                  className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer ${voiceInput ? 'bg-[#1B1E20]' : 'bg-transparent'}`}
-                  onClick={() => setVoiceInput(!voiceInput)}
-                >
-                  <div className={`w-4 h-4 rounded-full ${voiceInput ? 'bg-blue-500' : 'bg-[#949494]'}`}></div>
-                  <span className="text-white font-inter text-[14px]">Voice Input</span>
-                </div>
-                
-                <div 
-                  className={`flex items-center space-x-2 p-3 rounded-lg cursor-pointer ${voiceOutput ? 'bg-[#1B1E20]' : 'bg-transparent'}`}
-                  onClick={() => setVoiceOutput(!voiceOutput)}
-                >
-                  <div className={`w-4 h-4 rounded-full ${voiceOutput ? 'bg-blue-500' : 'bg-[#949494]'}`}></div>
-                  <span className="text-white font-inter text-[14px]">Voice Output</span>
-                </div>
-              </div>
-
               {/* Category Options */}
-              <div className="w-full space-y-4">
+              <div className="w-full max-w-xl space-y-4 px-6">
                 <button 
                   className="option-btn w-full flex items-center justify-between px-6 py-4 bg-transparent border border-[#949494] rounded-[36px] text-[#949494] font-sf-pro text-[16px] font-semibold"
                   onClick={() => handleCategorySelect('Healthcare')}
@@ -284,22 +272,58 @@ const ChatBotUI = () => {
                 </button>
               </div>
             </div>
+            
+            {/* Input field fixed at bottom */}
+            <div className="w-full">
+              <div className="max-w-4xl mx-auto py-4 px-4">
+                <div className="flex items-center bg-[#1B1E20] rounded-[16px] px-4 py-3">
+                  <button 
+                    className="mr-3"
+                    onClick={startListening}
+                  >
+                    <img src={recordIcon} alt="Record" className="w-6 h-6" />
+                  </button>
+                  <button className="mr-3">
+                    <img src={galleryIcon} alt="Gallery" className="w-6 h-6" />
+                  </button>
+                  <input 
+                    type="text" 
+                    placeholder="Type message" 
+                    className="bg-transparent border-none outline-none text-white flex-1 font-inter text-[14px] placeholder-white placeholder-opacity-20"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <button 
+                    className="ml-3"
+                    onClick={() => {
+                      if (input.trim()) {
+                        handleCategorySelect('General');
+                        setTimeout(() => sendMessage(), 100);
+                      }
+                    }}
+                  >
+                    <img src={sendIcon} alt="Send" className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           // Active chat interface
-          <div className="flex-1 flex flex-col p-6 h-full">
+          <div className="flex-1 flex flex-col h-full">
             {/* Chat Header */}
-            <div className="flex items-center justify-between mb-4 p-3 bg-[#1A1A1A] rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-[#121212] mx-6 mt-6">
               <div className="flex items-center space-x-3">
                 <img src={brainLogo} alt="Brain Logo" className="w-8 h-7" />
                 <h2 className="text-white font-medium text-lg font-poppins">{activeCategory || "BrainAI Chat"}</h2>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <div 
                   className={`flex items-center space-x-2 cursor-pointer`}
                   onClick={() => setVoiceInput(!voiceInput)}
                 >
-                  <div className={`w-3 h-3 rounded-full ${voiceInput ? 'bg-blue-500' : 'bg-[#949494]'}`}></div>
+                  <div className={`w-4 h-4 rounded-full ${voiceInput ? 'bg-white' : 'border border-white'}`}></div>
                   <span className="text-white text-sm">Voice Input</span>
                 </div>
                 
@@ -307,7 +331,7 @@ const ChatBotUI = () => {
                   className={`flex items-center space-x-2 cursor-pointer`}
                   onClick={() => setVoiceOutput(!voiceOutput)}
                 >
-                  <div className={`w-3 h-3 rounded-full ${voiceOutput ? 'bg-blue-500' : 'bg-[#949494]'}`}></div>
+                  <div className={`w-4 h-4 rounded-full ${voiceOutput ? 'bg-white' : 'border border-white'}`}></div>
                   <span className="text-white text-sm">Voice Output</span>
                 </div>
               </div>
@@ -316,15 +340,15 @@ const ChatBotUI = () => {
             {/* Chat Messages */}
             <div 
               ref={messageContainerRef}
-              className="flex-1 overflow-y-auto mb-4 p-4 bg-[#1A1A1A] rounded-lg"
+              className="flex-1 overflow-y-auto px-6 py-4"
             >
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg mb-3 max-w-[80%] ${
+                  className={`p-4 rounded-lg mb-3 max-w-[80%] ${
                     msg.sender === 'user' 
-                      ? 'bg-[#1B1E20] text-white ml-auto' 
-                      : 'bg-[#2A2A2A] text-white'
+                      ? 'bg-[#1A1A1A] text-white ml-auto' 
+                      : 'bg-[#1A1A1A] text-white'
                   }`}
                 >
                   {msg.text}
@@ -332,7 +356,7 @@ const ChatBotUI = () => {
               ))}
               {loading && (
                 <motion.div 
-                  className="p-3 rounded-lg bg-[#2A2A2A] text-white max-w-[80%]"
+                  className="p-4 rounded-lg bg-[#1A1A1A] text-white max-w-[80%]"
                   initial={{ opacity: 0.5 }}
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ repeat: Infinity, duration: 1 }}
@@ -343,32 +367,34 @@ const ChatBotUI = () => {
               <div ref={chatEndRef} />
             </div>
 
-            {/* Input Area */}
+            {/* Input Area - Positioned at the bottom of the screen */}
             <div className="w-full">
-              <div className="flex items-center bg-[#1B1E20] rounded-[16px] px-4 py-3">
-                <button 
-                  className="mr-3"
-                  onClick={startListening}
-                >
-                  <img src={recordIcon} alt="Record" className="w-6 h-6" />
-                </button>
-                <button className="mr-3">
-                  <img src={galleryIcon} alt="Gallery" className="w-6 h-6" />
-                </button>
-                <input 
-                  type="text" 
-                  placeholder="Type message" 
-                  className="bg-transparent border-none outline-none text-white flex-1 font-inter text-[14px]"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
-                <button 
-                  className="ml-3"
-                  onClick={sendMessage}
-                >
-                  <img src={sendIcon} alt="Send" className="w-6 h-6" />
-                </button>
+              <div className="max-w-4xl mx-auto py-4 px-4">
+                <div className="flex items-center bg-[#1B1E20] rounded-[16px] px-4 py-3">
+                  <button 
+                    className="mr-3"
+                    onClick={startListening}
+                  >
+                    <img src={recordIcon} alt="Record" className="w-6 h-6" />
+                  </button>
+                  <button className="mr-3">
+                    <img src={galleryIcon} alt="Gallery" className="w-6 h-6" />
+                  </button>
+                  <input 
+                    type="text" 
+                    placeholder="Type message" 
+                    className="bg-transparent border-none outline-none text-white opacity-20 flex-1 font-inter text-[14px] placeholder-white placeholder-opacity-20"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <button 
+                    className="ml-3"
+                    onClick={sendMessage}
+                  >
+                    <img src={sendIcon} alt="Send" className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
